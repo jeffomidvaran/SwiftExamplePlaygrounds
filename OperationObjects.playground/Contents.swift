@@ -23,14 +23,21 @@ import UIKit
 let fastBlock = BlockOperation {
     print("fast Block")
 }
-let slowBlock = BlockOperation {
+
+let mediumBlock = BlockOperation {
     sleep(1)
+    print("medium Block")
+}
+
+let slowBlock = BlockOperation {
+    sleep(2)
     print("slow Block")
 }
 
 // #########################################
 // ######### BLOCK ON COMPLETION ###########
 // #########################################
+// RUNS WHEN FASTBLOCK IS COMPLETED
 fastBlock.completionBlock = {
     print("Fast Block complete")
 }
@@ -41,8 +48,8 @@ fastBlock.completionBlock = {
 // #############################################
 let queue = OperationQueue()
 queue.name = "myQueue" //  for debugging
-queue.maxConcurrentOperationCount = 1
+queue.maxConcurrentOperationCount = 3
 
-//queue.addOperation(blockOperation)
+queue.addOperation(mediumBlock)
 queue.addOperations([fastBlock, slowBlock], waitUntilFinished: true)
 
