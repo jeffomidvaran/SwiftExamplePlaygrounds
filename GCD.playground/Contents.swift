@@ -94,3 +94,24 @@ DispatchQueue.global().async {
         print("concurrent perform \(index)")
     }
 }
+
+
+
+
+
+// ###################################
+// ############ MUTEX LOCK ###########
+// ###################################
+
+let lock = DispatchSemaphore(value: 1)
+let q2 = DispatchQueue(label: "Mutex Lock", attributes: .concurrent)
+var resouceInContention = 1
+
+for i in 0..<6 {
+    q2.async {
+        lock.wait()
+        resouceInContention = i
+        lock.signal()
+    }
+    
+}
