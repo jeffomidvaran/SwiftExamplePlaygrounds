@@ -49,8 +49,6 @@ let customQ = DispatchQueue(
             // target: queue // inherits attibutes from original queue
 )
 
-
-
 // ##############################
 // ####### GROUP EXECUTION ######
 // ##############################
@@ -96,9 +94,6 @@ DispatchQueue.global().async {
 }
 
 
-
-
-
 // ###################################
 // ############ MUTEX LOCK ###########
 // ###################################
@@ -114,4 +109,45 @@ for i in 0..<6 {
         lock.signal()
     }
     
+}
+
+
+// ##################################################################
+// ############ RETURNING THE RESULTS OF A           ################
+// ############ LONG RUNNING TASK TO THE MAIN QUEUE  ################
+// ##################################################################
+
+DispatchQueue.global(qos: .userInitiated).async {
+    // get long results of long running task
+    DispatchQueue.main.async {
+        // update main queue with results
+    }
+}
+
+
+// #######################################
+// ############ DeadLock #################
+// #######################################
+
+/*
+    sync stops current queue execution until the closure is finished
+    main thread is already running synchronus tasks so calling sync will interupt the current synchronus task (causing the program to crash
+*/
+//DispatchQueue.main.sync {}
+
+
+
+/*
+ the async closure needs to reach the end of it execution before it can be added to the queue
+ when sync start it takes control so async can't finish
+ sync's task can't run until async is set to thread to run
+ 
+*/
+
+let serialQueue = DispatchQueue(label: "testing")
+serialQueue.async {
+    longTask()
+    serialQueue.sync {
+        shortTask()
+    }
 }
