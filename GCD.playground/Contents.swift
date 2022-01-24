@@ -93,10 +93,38 @@ DispatchQueue.global().async {
     }
 }
 
+// #####################################
+// ############ MUTEX LOCK 1 ###########
+// #####################################
+func task1() {
+    print("task 1")
+    sleep(1)
+    print("after task 1")
+}
 
-// ###################################
-// ############ MUTEX LOCK ###########
-// ###################################
+func task2() {
+    print("task 2")
+    sleep(2)
+    print("after task 2")
+}
+var s = DispatchSemaphore(value: 1)
+DispatchQueue.global().async {
+    s.wait()
+    task1()
+    s.signal()
+}
+
+DispatchQueue.global().async {
+    s.wait()
+    task2()
+    s.signal()
+}
+
+
+
+// #####################################
+// ############ MUTEX LOCK 2 ###########
+// #####################################
 
 let lock = DispatchSemaphore(value: 1)
 let q2 = DispatchQueue(label: "Mutex Lock", attributes: .concurrent)
